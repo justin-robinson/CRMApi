@@ -23,8 +23,8 @@ namespace CRMApi.Controllers {
 
         // GET api/posts/5
         [HttpGet("{id}")]
-        public async Task<string> Get(string id) {
-            return (await DynamoDB.GetTableItemAsync(TABLE, id)).ToJson();
+        public async Task<JsonResult> Get(string id) {
+            return Json(new Post((await DynamoDB.GetTableItemAsync(TABLE, id))));
         }
 
         // POST api/posts

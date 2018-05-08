@@ -28,14 +28,12 @@ namespace CRMApi.Controllers
 
         // POST api/posts
         [HttpPost]
-        public async Task<string> Post(string content) {
-            Post p = new Post();
-            p.content = content;
-            p.postId = Guid.NewGuid().ToString();
-            p.createTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            p.updateTime = p.createTime;
-            await DynamoDB.putTableItemAsync("crm_posts", p.ToDocument());
-            return p.postId;
+        public async Task<string> Post(Post post) {
+            post.PostId = Guid.NewGuid().ToString();
+            post.CreateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            post.UpdateTime = post.CreateTime;
+            await DynamoDB.putTableItemAsync("crm_posts", post.ToDocument());
+            return post.PostId;
         }
 
         // PUT api/posts/5

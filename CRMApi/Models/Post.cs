@@ -5,6 +5,7 @@ namespace CRMApi.Models {
         public string Content { get; set; }
         public long CreateTime { get; set; }
         public long UpdateTime { get; set; }
+        public long DeleteTime { get; set; }
 
         public Post() { }
 
@@ -13,14 +14,16 @@ namespace CRMApi.Models {
             this.PostId = document["PostId"];
             this.CreateTime = (long)document["CreateTime"];
             this.UpdateTime = (long)document["UpdateTime"];
+            this.DeleteTime = (long)document["DeleteTime"];
         }
 
         public Document ToDocument() {
             Document document = new Document();
-            document["PostId"] = this.PostId;
-            document["Content"] = this.Content;
+            document["PostId"] = this.PostId ?? "";
+            document["Content"] = this.Content ?? "";
             document["CreateTime"] = this.CreateTime;
             document["UpdateTime"] = this.UpdateTime;
+            document["DeleteTime"] = this.DeleteTime;
             return document;
         }
     }

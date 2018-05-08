@@ -9,11 +9,10 @@ using Amazon.DynamoDBv2.DocumentModel;
 using CRMApi.AWS;
 using CRMApi.Models;
 
-namespace CRMApi.Controllers
-{
+namespace CRMApi.Controllers {
     [Route("api/[controller]")]
-    public class PostsController : Controller
-    {
+    public class PostsController : Controller {
+        private const string TABLE = "crm_posts";
         // GET api/posts
         [HttpGet]
         public IEnumerable<string> Get() {
@@ -23,7 +22,7 @@ namespace CRMApi.Controllers
         // GET api/posts/5
         [HttpGet("{id}")]
         public async Task<string> Get(string id) {
-            return await DynamoDB.getTableItemAsync("crm_posts", id);
+            return (await DynamoDB.GetTableItemAsync(TABLE, id)).ToJson();
         }
 
         // POST api/posts
@@ -32,7 +31,7 @@ namespace CRMApi.Controllers
             post.PostId = Guid.NewGuid().ToString();
             post.CreateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             post.UpdateTime = post.CreateTime;
-            await DynamoDB.putTableItemAsync("crm_posts", post.ToDocument());
+            await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
             return post.PostId;
         }
 
@@ -40,13 +39,16 @@ namespace CRMApi.Controllers
         [HttpPut("{id}")]
         public async Task<string> Put(int id, Post post) {
             post.UpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            await DynamoDB.putTableItemAsync("crm_posts", post.ToDocument());
+            await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
             return post.PostId;
         }
 
         // DELETE api/posts/5
         [HttpDelete("{id}")]
-        public void Delete(int id) {
+        public async void Delete(string id) {
+            Post post = new Post(await DynamoDB.GetTableItemAsync(TABLE, id));
+            post.DeleteTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
         }
     }
 }

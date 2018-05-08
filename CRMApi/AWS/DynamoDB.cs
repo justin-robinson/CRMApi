@@ -10,10 +10,8 @@ using Amazon.Runtime;
 
 using CRMApi.Models;
 
-namespace CRMApi.AWS
-{
-    public class DynamoDB
-    {
+namespace CRMApi.AWS {
+    public class DynamoDB {
         private static AmazonDynamoDBClient client = null;
         private const String PROFILE_NAME = "crmapi";
 
@@ -43,10 +41,9 @@ namespace CRMApi.AWS
             return table;
         }
 
-        public async static Task<string> getTableItemAsync(string tableName, string id){
+        public async static Task<Document> GetTableItemAsync(string tableName, string id) {
             Table table = GetTable(tableName);
-            Document document = await table.GetItemAsync(id);
-            return document.ToJson();
+            return await table.GetItemAsync(id);
         }
 
         //public async static Task<string> getTableItemsAsync(string tableName){
@@ -54,10 +51,14 @@ namespace CRMApi.AWS
         //    table.CreateBatchGet
         //}
 
-        public async static Task<Document> putTableItemAsync(string tableName, Document document){
+        public async static Task<Document> PutTableItemAsync(string tableName, Document document) {
             Table table = GetTable(tableName);
-            Document result = await table.PutItemAsync(document);
-            return result;
+            return await table.PutItemAsync(document);
+        }
+
+        public async static Task<Document> DeleteTableItemAsync(string tableName, Document document) {
+            Table table = GetTable(tableName);
+            return await table.DeleteItemAsync(document);
         }
     }
 }

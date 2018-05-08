@@ -38,7 +38,10 @@ namespace CRMApi.Controllers
 
         // PUT api/posts/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value) {
+        public async Task<string> Put(int id, Post post) {
+            post.UpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            await DynamoDB.putTableItemAsync("crm_posts", post.ToDocument());
+            return post.PostId;
         }
 
         // DELETE api/posts/5

@@ -15,8 +15,10 @@ namespace CRMApi.Controllers {
         private const string TABLE = "crm_posts";
         // GET api/posts
         [HttpGet]
-        public IEnumerable<string> Get() {
-            return new string[] { "value1", "value2" };
+        public async Task<JsonResult> Get() {
+            List<Post> posts = new List<Post>();
+            (await DynamoDB.GetTableItems(TABLE)).ForEach(d => posts.Add(new Post(d)));
+            return Json(posts);
         }
 
         // GET api/posts/5

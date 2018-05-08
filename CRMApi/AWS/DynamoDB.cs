@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.Runtime;
 
@@ -46,10 +48,20 @@ namespace CRMApi.AWS {
             return await table.GetItemAsync(id);
         }
 
-        //public async static Task<string> getTableItemsAsync(string tableName){
-        //    Table table = DynamoDB.GetTable(tableName);
-        //    table.CreateBatchGet
-        //}
+        public async static Task<List<Document>> GetTableItems(string tableName){
+            Table table = DynamoDB.GetTable(tableName);
+            ScanFilter notDeleted = new ScanFilter();
+            notDeleted.AddCondition("DeleteTime", ScanOperator.Equal, 0);
+            Search results = table.Scan(notDeleted);
+            List<Document> output = new List<Document>();
+            List<Document> set;
+            do {
+                set = await results.GetNextSetAsync();
+                set.ForEach(d =>  output.Add(d) );
+            } while (!results.IsDone);
+
+            return output;
+        }
 
         public async static Task<Document> PutTableItemAsync(string tableName, Document document) {
             Table table = GetTable(tableName);

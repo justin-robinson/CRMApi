@@ -10,23 +10,14 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.Runtime;
 
+using CRMApi.AWS.DynamoDB;
 using CRMApi.Models;
 
 namespace CRMApi.AWS {
-    public class DynamoDB {
-        private static AmazonDynamoDBClient client = null;
-        private const String PROFILE_NAME = "crmapi";
+    public class DynamoDBHelper {
 
         public static AmazonDynamoDBClient GetClient() {
-            if (client == null) {
-                var chain = new CredentialProfileStoreChain();
-                AWSCredentials crmApiCredentials;
-                if(chain.TryGetAWSCredentials(PROFILE_NAME, out crmApiCredentials)) {
-                    client = new AmazonDynamoDBClient(crmApiCredentials, RegionEndpoint.USEast1);
-                }
-            }
-
-            return client;
+			return Client.client;
         }
 
         public static Table GetTable(string tableName) {
@@ -49,7 +40,7 @@ namespace CRMApi.AWS {
         }
 
         public async static Task<List<Document>> GetTableItems(string tableName){
-            Table table = DynamoDB.GetTable(tableName);
+            Table table = GetTable(tableName);
             ScanFilter notDeleted = new ScanFilter();
             notDeleted.AddCondition("DeleteTime", ScanOperator.Equal, 0);
             Search results = table.Scan(notDeleted);

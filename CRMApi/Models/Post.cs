@@ -1,6 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
 
-using CRMApi.AWS;
+using CRMApi.AWS.DynamoDB;
 namespace CRMApi.Models {
     public class Post : DynamoDBModel {
         public string PostId { get; set; }

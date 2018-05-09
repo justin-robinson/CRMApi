@@ -17,14 +17,14 @@ namespace CRMApi.Controllers {
         [HttpGet]
         public async Task<JsonResult> Get() {
             List<Post> posts = new List<Post>();
-            (await DynamoDB.GetTableItems(TABLE)).ForEach(d => posts.Add(new Post(d)));
+            (await DynamoDBHelper.GetTableItems(TABLE)).ForEach(d => posts.Add(new Post(d)));
             return Json(posts);
         }
 
         // GET api/posts/5
         [HttpGet("{postId}")]
         public async Task<JsonResult> Get(string postId) {
-            return Json(new Post((await DynamoDB.GetTableItemAsync(TABLE, postId))));
+            return Json(new Post((await DynamoDBHelper.GetTableItemAsync(TABLE, postId))));
         }
 
         // POST api/posts
@@ -33,7 +33,7 @@ namespace CRMApi.Controllers {
             post.PostId = Guid.NewGuid().ToString();
             post.CreateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             post.UpdateTime = post.CreateTime;
-            await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
+            await DynamoDBHelper.PutTableItemAsync(TABLE, post.ToDocument());
             return post.PostId;
         }
 
@@ -41,16 +41,16 @@ namespace CRMApi.Controllers {
         [HttpPut("{postId}")]
         public async Task<string> Put(int postId, Post post) {
             post.UpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
+            await DynamoDBHelper.PutTableItemAsync(TABLE, post.ToDocument());
             return post.PostId;
         }
 
         // DELETE api/posts/5
         [HttpDelete("{postId}")]
         public async void Delete(string postId) {
-            Post post = new Post(await DynamoDB.GetTableItemAsync(TABLE, postId));
+            Post post = new Post(await DynamoDBHelper.GetTableItemAsync(TABLE, postId));
             post.DeleteTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
+            await DynamoDBHelper.PutTableItemAsync(TABLE, post.ToDocument());
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Amazon.DynamoDBv2.DocumentModel;
 using CRMApi.Utils;
-namespace CRMApi.AWS {
+namespace CRMApi.AWS.DynamoDB {
     public class DynamoDBModel {
         public DynamoDBModel(){}
 
@@ -35,5 +35,6 @@ namespace CRMApi.AWS {
             }
             return document;
         }
+
     }
 }

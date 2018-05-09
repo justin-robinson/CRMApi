@@ -35,9 +35,9 @@ namespace CRMApi
 
 
             if (Configuration["AWS:DynamoDB:Client:ServiceURL"] != null) {
-                Client.createClient(Configuration["AWS:DynamoDB:Client:ServiceURL"]);
+                Client.CreateClient(Configuration["AWS:DynamoDB:Client:ServiceURL"]);
             } else {
-                Client.createClient(
+                Client.CreateClient(
                     Configuration["AWS:DynamoDB:Client:ProfileName"],
                     Configuration["AWS:DynamoDB:Client:RegionEndpointName"]
                 );

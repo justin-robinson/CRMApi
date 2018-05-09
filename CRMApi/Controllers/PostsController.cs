@@ -22,9 +22,9 @@ namespace CRMApi.Controllers {
         }
 
         // GET api/posts/5
-        [HttpGet("{id}")]
-        public async Task<JsonResult> Get(string id) {
-            return Json(new Post((await DynamoDB.GetTableItemAsync(TABLE, id))));
+        [HttpGet("{postId}")]
+        public async Task<JsonResult> Get(string postId) {
+            return Json(new Post((await DynamoDB.GetTableItemAsync(TABLE, postId))));
         }
 
         // POST api/posts
@@ -38,17 +38,17 @@ namespace CRMApi.Controllers {
         }
 
         // PUT api/posts/5
-        [HttpPut("{id}")]
-        public async Task<string> Put(int id, Post post) {
+        [HttpPut("{postId}")]
+        public async Task<string> Put(int postId, Post post) {
             post.UpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
             return post.PostId;
         }
 
         // DELETE api/posts/5
-        [HttpDelete("{id}")]
-        public async void Delete(string id) {
-            Post post = new Post(await DynamoDB.GetTableItemAsync(TABLE, id));
+        [HttpDelete("{postId}")]
+        public async void Delete(string postId) {
+            Post post = new Post(await DynamoDB.GetTableItemAsync(TABLE, postId));
             post.DeleteTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             await DynamoDB.PutTableItemAsync(TABLE, post.ToDocument());
         }

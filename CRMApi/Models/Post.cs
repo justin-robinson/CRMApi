@@ -1,30 +1,16 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
+
+using CRMApi.AWS;
 namespace CRMApi.Models {
-    public class Post {
+    public class Post : DynamoDBModel {
         public string PostId { get; set; }
         public string Content { get; set; }
         public long CreateTime { get; set; }
         public long UpdateTime { get; set; }
         public long DeleteTime { get; set; }
 
-        public Post() { }
+        public Post() : base() {}
 
-        public Post(Document document) {
-            this.Content = document["Content"];
-            this.PostId = document["PostId"];
-            this.CreateTime = (long)document["CreateTime"];
-            this.UpdateTime = (long)document["UpdateTime"];
-            this.DeleteTime = (long)document["DeleteTime"];
-        }
-
-        public Document ToDocument() {
-            Document document = new Document();
-            document["PostId"] = this.PostId ?? "";
-            document["Content"] = this.Content ?? "";
-            document["CreateTime"] = this.CreateTime;
-            document["UpdateTime"] = this.UpdateTime;
-            document["DeleteTime"] = this.DeleteTime;
-            return document;
-        }
+        public Post(Document document) : base(document) {}
     }
 }

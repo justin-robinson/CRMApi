@@ -13,7 +13,12 @@ namespace CRMApi.AWS.DynamoDB {
 			var chain = new CredentialProfileStoreChain ();
             AWSCredentials crmApiCredentials;
 			if (chain.TryGetAWSCredentials(profileName, out crmApiCredentials)) {
-				client = new AmazonDynamoDBClient(crmApiCredentials, RegionEndpoint.GetBySystemName (regionEndpointName));
+                try{
+                    client = new AmazonDynamoDBClient (crmApiCredentials, RegionEndpoint.GetBySystemName (regionEndpointName));    
+                } catch (Exception e) {
+                    Console.WriteLine ("\n Error: failed to create a DynamoDB client; " + e.Message);
+                }
+				
             }
         }
 
@@ -22,8 +27,8 @@ namespace CRMApi.AWS.DynamoDB {
                 client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig {
                     ServiceURL = serviceURL
                 });
-            } catch (Exception ex) {
-                Console.WriteLine("\n Error: failed to create a DynamoDB client; " + ex.Message);
+            } catch (Exception e) {
+                Console.WriteLine("\n Error: failed to create a DynamoDB client; " + e.Message);
             }
 		}
     }

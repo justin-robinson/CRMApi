@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using CRMApi.AWS.DynamoDB;
+using CRMApi.Models;
 
 namespace CRMApi
 {
@@ -27,7 +28,7 @@ namespace CRMApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public async void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
@@ -41,7 +42,13 @@ namespace CRMApi
                     Configuration["AWS:DynamoDB:Client:ProfileName"],
                     Configuration["AWS:DynamoDB:Client:RegionEndpointName"]
                 );
-            }         
+                try {
+                    await Client.AmazonDynamoDBClient.DescribeTableAsync(Post.TABLE);
+                } catch (Exception e) {
+                    Console.WriteLine($"{Post.TABLE} table does not exist. Creating. {e.Message}");
+                    await Client.AmazonDynamoDBClient.CreateTableAsync(Post.TableRequest());
+                }
+            }
 
             app.UseMvc();
         }

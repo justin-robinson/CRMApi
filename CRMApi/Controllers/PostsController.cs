@@ -12,6 +12,7 @@ using CRMApi.Models;
 namespace CRMApi.Controllers {
     [Route("api/[controller]")]
     public class PostsController : Controller {
+
         // GET api/posts
         [HttpGet]
         public async Task<JsonResult> Get() {

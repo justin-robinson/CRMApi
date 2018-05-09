@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-using Amazon.DynamoDBv2.DocumentModel;
-
-using CRMApi.AWS;
+using CRMApi.AWS.DynamoDB;
 using CRMApi.Models;
 
 namespace CRMApi.Controllers {
@@ -16,15 +13,17 @@ namespace CRMApi.Controllers {
         // GET api/posts
         [HttpGet]
         public async Task<JsonResult> Get() {
-            List<Post> posts = new List<Post>();
-            (await DynamoDBHelper.GetTableItems(TABLE)).ForEach(d => posts.Add(new Post(d)));
+            Post post = new Post();
+            List<DynamoDBModel> posts = await post.GetAll();
             return Json(posts);
         }
 
         // GET api/posts/5
         [HttpGet("{postId}")]
         public async Task<JsonResult> Get(string postId) {
-            return Json(new Post((await DynamoDBHelper.GetTableItemAsync(TABLE, postId))));
+            Post post = new Post();
+            await post.Get(postId);
+            return Json(post);
         }
 
         // POST api/posts
@@ -33,7 +32,7 @@ namespace CRMApi.Controllers {
             post.PostId = Guid.NewGuid().ToString();
             post.CreateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             post.UpdateTime = post.CreateTime;
-            await DynamoDBHelper.PutTableItemAsync(TABLE, post.ToDocument());
+            await post.Save();
             return post.PostId;
         }
 
@@ -41,16 +40,17 @@ namespace CRMApi.Controllers {
         [HttpPut("{postId}")]
         public async Task<string> Put(int postId, Post post) {
             post.UpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            await DynamoDBHelper.PutTableItemAsync(TABLE, post.ToDocument());
+            await post.Save();
             return post.PostId;
         }
 
         // DELETE api/posts/5
         [HttpDelete("{postId}")]
         public async void Delete(string postId) {
-            Post post = new Post(await DynamoDBHelper.GetTableItemAsync(TABLE, postId));
+            Post post = new Post();
+            await post.Get(postId);
             post.DeleteTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            await DynamoDBHelper.PutTableItemAsync(TABLE, post.ToDocument());
+            await post.Save();
         }
     }
 }

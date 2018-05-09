@@ -9,7 +9,9 @@ namespace CRMApi.Models {
         public long UpdateTime { get; set; }
         public long DeleteTime { get; set; }
 
-        public Post() : base() {}
+        public Post() : base() {
+            this.TableName = "crm_posts";
+        }
 
         public Post(Document document) : base(document) {}
     }

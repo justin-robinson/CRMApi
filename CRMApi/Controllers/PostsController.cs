@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.Runtime;
 
 using CRMApi.AWS.DynamoDB;
 using CRMApi.Models;
@@ -19,7 +17,7 @@ namespace CRMApi.Controllers {
         public async Task<JsonResult> Get() {
             LinkedList<Post> posts = new LinkedList<Post>();
             var query = Client.GetContext().ScanAsync<Post>(new List<ScanCondition> {
-                new ScanCondition("DeleteTime", ScanOperator.Equal, (long)0)
+                new ScanCondition("DeleteTime", ScanOperator.Equal, DateTime.MinValue)
             });
             while (!query.IsDone) {
                 (await query.GetNextSetAsync()).ForEach(p => posts.AddLast(p));
@@ -38,7 +36,7 @@ namespace CRMApi.Controllers {
         [HttpPost]
         public async Task<string> Post(Post post) {
             post.PostId = Guid.NewGuid().ToString();
-            post.CreateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            post.CreateTime = DateTime.Now;
             post.UpdateTime = post.CreateTime;
             await Client.GetContext().SaveAsync(post);
             return post.PostId;
@@ -48,7 +46,7 @@ namespace CRMApi.Controllers {
         [HttpPut("{postId}")]
         public async Task<string> Put(string postId, Post post) {
             post.PostId = postId;
-            post.UpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            post.UpdateTime = DateTime.Now;
             await Client.GetContext().SaveAsync(post);
             return post.PostId;
         }
@@ -58,7 +56,7 @@ namespace CRMApi.Controllers {
         public async void Delete(string postId) {
             var context = Client.GetContext();
             Post post = await context.LoadAsync<Post>(postId);
-            post.DeleteTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            post.DeleteTime = DateTime.Now;
             await context.SaveAsync(post);
         }
     }

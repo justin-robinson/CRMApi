@@ -1,0 +1,11 @@
+﻿{
+  "region": "us-east-1",
+  "profile": "crmapi",
+  "configuration": "Release",
+  "framework": "netcoreapp2.0",
+  "s3-bucket": "crm-api-dev-serverlessdeploymentbucket",
+  "s3-prefix": "crm-api-dev/",
+  "template": "./serverless.template",
+  "template-parameters": "\"ShouldCreateBucket\"=\"false\";\"BucketName\"=\"crm-api-dev-bucket-18a5r8bbg1exp\"",
+  "stack-name": "crm-api-dev"
+}

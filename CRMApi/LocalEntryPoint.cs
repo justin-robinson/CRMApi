@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CRMApi
 {
-    public class Program
+    public class LocalEntryPoint
     {
         public static void Main(string[] args)
         {

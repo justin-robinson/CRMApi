@@ -2,13 +2,19 @@
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.Lambda.Core;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
+
 namespace CRMApi.AWS.DynamoDB {
 
     public static class Client {
 
-        public static AmazonDynamoDBClient AmazonDynamoDBClient;
+        public static AmazonDynamoDBClient AmazonDynamoDBClient { get; set; }
+
+        public static void CreateClient() {
+            AmazonDynamoDBClient = new AmazonDynamoDBClient();
+        }
 
 		public static void CreateClient(string profileName, string regionEndpointName) {
 			var chain = new CredentialProfileStoreChain ();
@@ -17,7 +23,7 @@ namespace CRMApi.AWS.DynamoDB {
                 try{
                     AmazonDynamoDBClient = new AmazonDynamoDBClient (crmApiCredentials, RegionEndpoint.GetBySystemName (regionEndpointName));    
                 } catch (Exception e) {
-                    Console.WriteLine ("\n Error: failed to create a DynamoDB client; " + e.Message);
+                    LambdaLogger.Log($"Error: failed to create a DynamoDB client: {e.Message}");
                 }
 				
             }
@@ -29,7 +35,7 @@ namespace CRMApi.AWS.DynamoDB {
                     ServiceURL = serviceURL
                 });
             } catch (Exception e) {
-                Console.WriteLine("\n Error: failed to create a DynamoDB client; " + e.Message);
+                LambdaLogger.Log($"Error: failed to create a DynamoDB clien: {e.Message}");
             }
 		}
 

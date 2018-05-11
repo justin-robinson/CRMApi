@@ -9,8 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using Amazon.DynamoDBv2.Model;
+
 using CRMApi.AWS.DynamoDB;
-using CRMApi.Models;
+
+using Amazon.Lambda.Core;
 
 namespace CRMApi
 {
@@ -28,26 +31,24 @@ namespace CRMApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public async void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
 
 
             if (Configuration["AWS:DynamoDB:Client:ServiceURL"] != null) {
+                LambdaLogger.Log($"Initializing DynamoDB client with service url: {Configuration["AWS:DynamoDB:Client:ServiceURL"]}");
                 Client.CreateClient(Configuration["AWS:DynamoDB:Client:ServiceURL"]);
-            } else {
+            } else if (Configuration["AWS:DynamoDB:Client:ProfileName"] != null && Configuration["AWS:DynamoDB:Client:RegionEndpointName"] != null) {
+                LambdaLogger.Log($"Initializing DynamoDB client with profile: {Configuration["AWS:DynamoDB:Client:ProfileName"]}");
                 Client.CreateClient(
                     Configuration["AWS:DynamoDB:Client:ProfileName"],
                     Configuration["AWS:DynamoDB:Client:RegionEndpointName"]
                 );
-                try {
-                    await Client.AmazonDynamoDBClient.DescribeTableAsync(Post.TABLE);
-                } catch (Exception e) {
-                    Console.WriteLine($"{Post.TABLE} table does not exist. Creating. {e.Message}");
-                    await Client.AmazonDynamoDBClient.CreateTableAsync(Post.TableRequest());
-                }
+            } else {
+                LambdaLogger.Log($"Initializing DynamoDB client with no args");
+                Client.CreateClient();
             }
 
             app.UseMvc();

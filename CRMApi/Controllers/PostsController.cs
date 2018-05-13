@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 
 using CRMApi.AWS.DynamoDB;
+using CRMApi.AWS.DynamoDB.Linq;
 using CRMApi.Models;
 
 namespace CRMApi.Controllers {
@@ -15,21 +17,24 @@ namespace CRMApi.Controllers {
 
         // GET api/posts
         [HttpGet]
-        public async Task<JsonResult> Get() {
-            LinkedList<Post> posts = new LinkedList<Post>();
-            var query = Client.GetContext().ScanAsync<Post>(new List<ScanCondition> {
-                new ScanCondition("DeleteTime", ScanOperator.Equal, DateTime.MinValue)
-            });
-            while (!query.IsDone) {
-                (await query.GetNextSetAsync()).ForEach(p => posts.AddLast(p));
-            }
-            return Json(posts);
+        public JsonResult Get() {
+            QueryableServerData<Post> posts = new QueryableServerData<Post>();
+            var q =
+                from p in posts
+                where p.DeleteTime == DateTime.MinValue
+                select p;
+            return Json(q.ToList());
         }
 
         // GET api/posts/5
         [HttpGet("{postId}")]
-        public async Task<JsonResult> Get(string postId) {
-            Post post = await Client.GetContext().LoadAsync<Post>(postId);
+        public JsonResult Get(string postId) {
+            QueryableServerData<Post> posts = new QueryableServerData<Post>();
+            var q =
+                (from p in posts
+                 where p.PostId == postId
+                 select p).Take(1);
+            Post post = q.First();
             return Json(post);
         }
 
@@ -56,7 +61,12 @@ namespace CRMApi.Controllers {
         [HttpDelete("{postId}")]
         public async void Delete(string postId) {
             var context = Client.GetContext();
-            Post post = await context.LoadAsync<Post>(postId);
+            QueryableServerData<Post> posts = new QueryableServerData<Post>();
+            var q =
+                (from p in posts
+                 where p.PostId == postId
+                 select p).Take(1);
+            Post post = q.First();
             post.DeleteTime = DateTime.Now;
             await context.SaveAsync(post);
         }

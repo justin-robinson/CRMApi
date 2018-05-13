@@ -14,26 +14,14 @@ namespace CRMApi.Models {
         [DynamoDBProperty] public DateTime UpdateTime { get; set; }
         [DynamoDBProperty] public DateTime DeleteTime { get; set; }
 
-        public static CreateTableRequest TableRequest() {
-            return new CreateTableRequest {
-                TableName = TABLE,
-                AttributeDefinitions = new List<AttributeDefinition>(){
-                    new AttributeDefinition {
-                        AttributeName = HASH_KEY,
-                        AttributeType = "S"
-                    }
-                },
-                KeySchema = new List<KeySchemaElement>() {
-                    new KeySchemaElement {
-                        AttributeName = HASH_KEY,
-                        KeyType = "HASH"
-                    }
-                  },
-                ProvisionedThroughput = new ProvisionedThroughput {
-                    ReadCapacityUnits = 5,
-                    WriteCapacityUnits = 5
-                }
-            };
+        public Post() { }
+
+        public Post(string postId, string content, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
+            PostId = postId;
+            Content = content;
+            CreateTime = createTime;
+            UpdateTime = updateTime;
+            DeleteTime = deleteTime;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CRMApi.AWS.DynamoDB {
             AmazonDynamoDBClient = new AmazonDynamoDBClient();
         }
 
-		public static void CreateClient(string profileName, string regionEndpointName) {
+        public static void CreateClient(string profileName, string regionEndpointName) {
 			var chain = new CredentialProfileStoreChain ();
             AWSCredentials crmApiCredentials;
 			if (chain.TryGetAWSCredentials(profileName, out crmApiCredentials)) {
@@ -29,7 +29,7 @@ namespace CRMApi.AWS.DynamoDB {
             }
         }
 
-		public static void CreateClient(string serviceURL) {
+        public static void CreateClient(string serviceURL) {
             try {
                 AmazonDynamoDBClient = new AmazonDynamoDBClient(new AmazonDynamoDBConfig {
                     ServiceURL = serviceURL

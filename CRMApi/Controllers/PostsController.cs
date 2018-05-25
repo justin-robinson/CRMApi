@@ -21,7 +21,7 @@ namespace CRMApi.Controllers {
             var posts = new QueryableServerData<Post>();
             var q =
                 from p in posts
-                where p.DeleteTime == DateTime.MinValue
+                where p.DeleteTime > DateTime.Now
                 select p;
             return Json(q.ToList());
         }
@@ -44,6 +44,7 @@ namespace CRMApi.Controllers {
             post.PostId = Guid.NewGuid();
             post.CreateTime = DateTime.Now;
             post.UpdateTime = post.CreateTime;
+            post.DeleteTime = DateTime.MaxValue;
             await Client.GetContext().SaveAsync(post);
             return post.PostId;
         }
@@ -66,7 +67,7 @@ namespace CRMApi.Controllers {
                 (from p in posts
                  where p.PostId == postId
                  select p).Take(1);
-            Post post = q.First();
+            var post = q.First();
             post.DeleteTime = DateTime.Now;
             await context.SaveAsync(post);
         }

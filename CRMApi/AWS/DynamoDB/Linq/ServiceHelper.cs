@@ -18,7 +18,7 @@ namespace CRMApi.AWS.DynamoDB.Linq {
 
         internal static Post[] GetPosts() {
             var scanConditions = new LinkedList<ScanCondition>();
-            scanConditions.AddLast(new ScanCondition("DeleteTime", ScanOperator.Equal, DateTime.MinValue));
+            scanConditions.AddLast(new ScanCondition(nameof(Post.DeleteTime), ScanOperator.GreaterThan, DateTime.Now));
             return GetPosts(scanConditions).ToArray();
         }
 

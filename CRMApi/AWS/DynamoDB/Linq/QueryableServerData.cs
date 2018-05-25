@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,8 +10,8 @@ namespace CRMApi.AWS.DynamoDB.Linq {
         public Expression Expression { get; set; }
 
         public QueryableServerData() {
-            this.Provider = new QueryProvider();
-            this.Expression = Expression.Constant(this);
+            Provider = new QueryProvider();
+            Expression = Expression.Constant(this);
         }
 
         public QueryableServerData(QueryProvider provider, Expression expression) {
@@ -22,22 +23,19 @@ namespace CRMApi.AWS.DynamoDB.Linq {
                 throw new ArgumentOutOfRangeException(nameof(expression));
             }
 
-            this.Provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            this.Expression = expression;
+            Provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            Expression = expression;
         }
 
-        public Type ElementType {
-            get { return typeof(T); }
-        }
+        public Type ElementType => typeof(T);
 
         public IEnumerator<T> GetEnumerator() {
-            return (this.Provider.Execute<IEnumerable<T>>(this.Expression)).GetEnumerator();
+            return Provider.Execute<IEnumerable<T>>(Expression).GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-            return (this.Provider.Execute<System.Collections.IEnumerable>(this.Expression)).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Provider.Execute<IEnumerable>(Expression).GetEnumerator();
         }
-
 
     }
 }

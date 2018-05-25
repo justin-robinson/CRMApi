@@ -6,8 +6,8 @@ using System.Linq.Expressions;
 using CRMApi.Models;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
-    public static class QueryContext  {
-        internal static object Execute(Expression expression, bool isEnumerable) {
+    public class QueryContext  {
+        public static T Execute<T, U>(Expression expression, bool isEnumerable) {
             if (!IsQueryOverDataSource(expression)) {
                 throw new InvalidProgramException("No query over the data source was specified.");
             }
@@ -20,16 +20,18 @@ namespace CRMApi.AWS.DynamoDB.Linq {
 
             var itemFinder = new ItemFinder(lambdaExpression.Body);
 
-            var posts = ServiceHelper.GetPosts(itemFinder.ScanConditions);
+            var items = ServiceHelper.GetItems<U>(itemFinder.ScanConditions);
 
-            var queryablePosts = posts.AsQueryable();
+            var queryableItems = items.AsQueryable();
 
-            var treeCopier = new ExpressionTreeModifier(queryablePosts);
+            var treeCopier = new ExpressionTreeModifier<U>(queryableItems);
             var newExpressionTree = treeCopier.Visit(expression);
 
-            return isEnumerable
-                ? queryablePosts.Provider.CreateQuery(newExpressionTree)
-                : queryablePosts.Provider.Execute(newExpressionTree);
+            var output = isEnumerable
+                ? queryableItems.Provider.CreateQuery(newExpressionTree)
+                : queryableItems.Provider.Execute(newExpressionTree);
+
+            return (T) output;
         }
 
         private static bool IsQueryOverDataSource(Expression expression) {

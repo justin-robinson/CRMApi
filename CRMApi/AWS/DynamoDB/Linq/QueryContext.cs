@@ -12,32 +12,25 @@ namespace CRMApi.AWS.DynamoDB.Linq {
                 throw new InvalidProgramException("No query over the data source was specified.");
             }
 
-            InnermostWhereFinder whereFinder = new InnermostWhereFinder();
-            MethodCallExpression whereExpression = whereFinder.GetInnermostWhere(expression);
-            LambdaExpression lambdaExpression = (LambdaExpression)((UnaryExpression)(whereExpression.Arguments[1])).Operand;
+            var whereFinder = new InnermostWhereFinder();
+            var whereExpression = whereFinder.GetInnermostWhere(expression);
+            var lambdaExpression = (LambdaExpression)((UnaryExpression)(whereExpression.Arguments[1])).Operand;
 
             lambdaExpression = (LambdaExpression)Evaluator.PartialEval(lambdaExpression);
 
-            PostFinder postFinder = new PostFinder(lambdaExpression.Body);
-            List<string> postIds = postFinder.PostIds;
+            var postFinder = new PostFinder(lambdaExpression.Body);
+            var postIds = postFinder.PostIds;
 
-            Post[] posts;
-            if (postIds.Count == 0) {
-                posts = ServiceHelper.GetPosts();
-            } else {
-                posts = ServiceHelper.GetPostsByPostId(postIds);
-            }
+            var posts = postIds.Any() ? ServiceHelper.GetPostsByPostId(postIds) : ServiceHelper.GetPosts();
 
-            IQueryable<Post> queryablePosts = posts.AsQueryable<Post>();
+            var queryablePosts = posts.AsQueryable();
 
-            ExpressionTreeModifier treeCopier = new ExpressionTreeModifier(queryablePosts);
-            Expression newExpressionTree = treeCopier.Visit(expression);
+            var treeCopier = new ExpressionTreeModifier(queryablePosts);
+            var newExpressionTree = treeCopier.Visit(expression);
 
-            if (isEnumerable) {
-                return queryablePosts.Provider.CreateQuery(newExpressionTree);
-            }
-
-            return queryablePosts.Provider.Execute(newExpressionTree);
+            return isEnumerable
+                ? queryablePosts.Provider.CreateQuery(newExpressionTree)
+                : queryablePosts.Provider.Execute(newExpressionTree);
         }
 
         private static bool IsQueryOverDataSource(Expression expression) {

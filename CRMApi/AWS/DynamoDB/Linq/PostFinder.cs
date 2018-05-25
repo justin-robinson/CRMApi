@@ -1,41 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-
+using Amazon.DynamoDBv2.DataModel;
 using CRMApi.Models;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
     public class PostFinder : ExpressionVisitor {
 
-        private Expression expression;
-        private List<string> postIds;
+        private readonly Expression _expression;
+        private List<Guid> _postIds;
+        private LinkedList<ScanCondition> _scanConditions;
 
         public PostFinder(Expression expression) {
-            this.expression = expression;
+            _expression = expression;
         }
 
-        public List<string> PostIds {
+        public List<Guid> PostIds {
             get {
-                if (this.postIds == null) {
-                    this.postIds = new List<string>();
-                    Visit(this.expression);
-                }
-                return this.postIds;
+                if (_postIds != null) return _postIds;
+                _postIds = new List<Guid>();
+                Visit(_expression);
+                return _postIds;
             }
         }
 
         protected override Expression VisitBinary(BinaryExpression binaryExpression) {
-            if (binaryExpression.NodeType == ExpressionType.Equal) {
-                if(ExpressionTreeHelpers.IsMemberEqualsValueExpression(binaryExpression, typeof(Post), "PostId")) {
-                    postIds.Add(ExpressionTreeHelpers.GetValueFromEqualsExpression(binaryExpression, typeof(Post), "PostId"));
-                    return binaryExpression;
-                } else {
-                    return base.VisitBinary(binaryExpression);
-                }
-            } else {
+            if (binaryExpression.NodeType != ExpressionType.Equal ||
+                !ExpressionTreeHelpers.IsMemberEqualsValueExpression(binaryExpression, typeof(Post), "PostId")) {
                 return base.VisitBinary(binaryExpression);
             }
+
+            var value = ExpressionTreeHelpers.GetValueFromEqualsExpression(binaryExpression, typeof(Post), "PostId");
+
+            _postIds.Add(new Guid(value.ToString()));
+            return binaryExpression;
         }
     }
 }

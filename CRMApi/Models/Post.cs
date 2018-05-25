@@ -8,7 +8,7 @@ namespace CRMApi.Models {
     public class Post {
         public const string TABLE = "Posts";
         public const string HASH_KEY = "PostId";
-        [DynamoDBHashKey] public string PostId { get; set; }
+        [DynamoDBHashKey] public Guid PostId { get; set; }
         [DynamoDBProperty] public string Content { get; set; }
         [DynamoDBProperty] public DateTime CreateTime { get; set; }
         [DynamoDBProperty] public DateTime UpdateTime { get; set; }
@@ -16,7 +16,7 @@ namespace CRMApi.Models {
 
         public Post() { }
 
-        public Post(string postId, string content, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
+        public Post(Guid postId, string content, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
             PostId = postId;
             Content = content;
             CreateTime = createTime;

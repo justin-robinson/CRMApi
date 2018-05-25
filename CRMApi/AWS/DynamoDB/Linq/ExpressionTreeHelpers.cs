@@ -7,29 +7,29 @@ namespace CRMApi.AWS.DynamoDB.Linq {
             if (exp.NodeType != ExpressionType.Equal)
                 return false;
 
-            BinaryExpression be = (BinaryExpression)exp;
+            var be = (BinaryExpression)exp;
 
             // Assert. 
-            if (ExpressionTreeHelpers.IsSpecificMemberExpression(be.Left, declaringType, memberName) &&
-                ExpressionTreeHelpers.IsSpecificMemberExpression(be.Right, declaringType, memberName))
+            if (IsSpecificMemberExpression(be.Left, declaringType, memberName) &&
+                IsSpecificMemberExpression(be.Right, declaringType, memberName))
                 throw new Exception("Cannot have 'member' == 'member' in an expression!");
 
-            return (ExpressionTreeHelpers.IsSpecificMemberExpression(be.Left, declaringType, memberName) ||
-                ExpressionTreeHelpers.IsSpecificMemberExpression(be.Right, declaringType, memberName));
+            return IsSpecificMemberExpression(be.Left, declaringType, memberName) ||
+                IsSpecificMemberExpression(be.Right, declaringType, memberName);
         }
 
         internal static bool IsSpecificMemberExpression(Expression exp, Type declaringType, string memberName) {
-            return ((exp is MemberExpression) &&
-                (((MemberExpression)exp).Member.DeclaringType == declaringType) &&
-                (((MemberExpression)exp).Member.Name == memberName));
+            return exp is MemberExpression &&
+                ((MemberExpression)exp).Member.DeclaringType == declaringType &&
+                ((MemberExpression)exp).Member.Name == memberName;
         }
 
-        internal static string GetValueFromEqualsExpression(BinaryExpression be, Type memberDeclaringType, string memberName) {
+        internal static object GetValueFromEqualsExpression(BinaryExpression be, Type memberDeclaringType, string memberName) {
             if (be.NodeType != ExpressionType.Equal)
                 throw new Exception("There is a bug in this program.");
 
             if (be.Left.NodeType == ExpressionType.MemberAccess) {
-                MemberExpression me = (MemberExpression)be.Left;
+                var me = (MemberExpression)be.Left;
 
                 if (me.Member.DeclaringType == memberDeclaringType && me.Member.Name == memberName) {
                     return GetValueFromExpression(be.Right);
@@ -46,11 +46,11 @@ namespace CRMApi.AWS.DynamoDB.Linq {
             throw new Exception("There is a bug in this program.");
         }
 
-        internal static string GetValueFromExpression(Expression expression) {
-            if (expression.NodeType == ExpressionType.Constant)
-                return (string)(((ConstantExpression)expression).Value);
-            else
-                throw new InvalidQueryException(
+        internal static object GetValueFromExpression(Expression expression) {
+            if (expression.NodeType == ExpressionType.Constant) {
+                return ((ConstantExpression)expression).Value;
+            }
+            throw new InvalidQueryException(
                     String.Format("The expression type {0} is not supported to obtain a value.", expression.NodeType));
         }
     }

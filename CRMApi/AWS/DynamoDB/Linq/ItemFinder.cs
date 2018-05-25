@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Amazon.DynamoDBv2.DataModel;
-using Expression = System.Linq.Expressions.Expression;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
     public class ItemFinder : ExpressionVisitor {

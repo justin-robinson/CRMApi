@@ -1,24 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Amazon.S3.Transfer;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
     internal class ExpressionTreeHelpers {
-        internal static bool IsMemberEqualsValueExpression(Expression exp, Type declaringType, string memberName) {
-            if (exp.NodeType != ExpressionType.Equal)
-                return false;
-
-            var be = (BinaryExpression)exp;
-
-            // Assert. 
-            if (IsSpecificMemberExpression(be.Left, declaringType, memberName) &&
-                IsSpecificMemberExpression(be.Right, declaringType, memberName))
-                throw new Exception("Cannot have 'member' == 'member' in an expression!");
-
-            return IsSpecificMemberExpression(be.Left, declaringType, memberName) ||
-                IsSpecificMemberExpression(be.Right, declaringType, memberName);
-        }
-
         internal static bool IsSpecificMemberExpression(Expression exp, Type declaringType, string memberName) {
             return exp is MemberExpression &&
                 ((MemberExpression)exp).Member.DeclaringType == declaringType &&

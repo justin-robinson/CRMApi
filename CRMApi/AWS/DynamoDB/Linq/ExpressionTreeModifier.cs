@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Expressions;
-
-using CRMApi.Models;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
     internal class ExpressionTreeModifier<T> : ExpressionVisitor {

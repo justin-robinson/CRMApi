@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-using CRMApi.Models;
-
 namespace CRMApi.AWS.DynamoDB.Linq {
     public class QueryContext  {
-        public static T Execute<T, U>(Expression expression, bool isEnumerable) {
+        public static T Execute<T, TU>(Expression expression, bool isEnumerable) {
             if (!IsQueryOverDataSource(expression)) {
                 throw new InvalidProgramException("No query over the data source was specified.");
             }
@@ -20,11 +17,11 @@ namespace CRMApi.AWS.DynamoDB.Linq {
 
             var itemFinder = new ItemFinder(lambdaExpression.Body);
 
-            var items = ServiceHelper.GetItems<U>(itemFinder.ScanConditions);
+            var items = ServiceHelper.GetItems<TU>(itemFinder.ScanConditions);
 
             var queryableItems = items.AsQueryable();
 
-            var treeCopier = new ExpressionTreeModifier<U>(queryableItems);
+            var treeCopier = new ExpressionTreeModifier<TU>(queryableItems);
             var newExpressionTree = treeCopier.Visit(expression);
 
             var output = isEnumerable

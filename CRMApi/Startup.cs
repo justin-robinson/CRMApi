@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
-using Amazon.DynamoDBv2.Model;
-
-using CRMApi.AWS.DynamoDB;
 
 using Amazon.Lambda.Core;
+
+using CRMApi.AWS.DynamoDB;
 
 namespace CRMApi
 {
@@ -47,7 +39,7 @@ namespace CRMApi
                     Configuration["AWS:DynamoDB:Client:RegionEndpointName"]
                 );
             } else {
-                LambdaLogger.Log($"Initializing DynamoDB client with no args");
+                LambdaLogger.Log("Initializing DynamoDB client with no args");
                 Client.CreateClient();
             }
 

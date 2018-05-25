@@ -2,12 +2,7 @@
 using System.Linq.Expressions;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
-    internal class ExpressionTreeHelpers {
-        internal static bool IsSpecificMemberExpression(Expression exp, Type declaringType, string memberName) {
-            return exp is MemberExpression &&
-                ((MemberExpression)exp).Member.DeclaringType == declaringType &&
-                ((MemberExpression)exp).Member.Name == memberName;
-        }
+    internal class ExpressionTreeHelper {
 
         internal static bool TryGetExpressionFieldAndValue(BinaryExpression be, out string fieldName, out object value) {
             if (be.Left.NodeType == ExpressionType.MemberAccess) {

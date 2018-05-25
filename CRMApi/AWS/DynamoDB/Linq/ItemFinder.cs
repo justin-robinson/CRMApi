@@ -27,7 +27,7 @@ namespace CRMApi.AWS.DynamoDB.Linq {
                 throw new Exception($"Unsupported {nameof(ExpressionType)}");
             }
 
-            if (!ExpressionTreeHelpers.TryGetExpressionFieldAndValue(binaryExpression, out var fieldName, out var value)) {
+            if (!ExpressionTreeHelper.TryGetExpressionFieldAndValue(binaryExpression, out var fieldName, out var value)) {
                 throw new Exception("Failed to get expression field name and value");
             }
             ScanConditions.Add(new ScanCondition(fieldName, scanOperator, value));

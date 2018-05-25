@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Amazon.S3.Transfer;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
     internal class ExpressionTreeHelpers {
@@ -24,26 +25,23 @@ namespace CRMApi.AWS.DynamoDB.Linq {
                 ((MemberExpression)exp).Member.Name == memberName;
         }
 
-        internal static object GetValueFromEqualsExpression(BinaryExpression be, Type memberDeclaringType, string memberName) {
-            if (be.NodeType != ExpressionType.Equal)
-                throw new Exception("There is a bug in this program.");
-
+        internal static bool TryGetExpressionFieldAndValue(BinaryExpression be, out string fieldName, out object value) {
             if (be.Left.NodeType == ExpressionType.MemberAccess) {
-                var me = (MemberExpression)be.Left;
-
-                if (me.Member.DeclaringType == memberDeclaringType && me.Member.Name == memberName) {
-                    return GetValueFromExpression(be.Right);
-                }
-            } else if (be.Right.NodeType == ExpressionType.MemberAccess) {
-                MemberExpression me = (MemberExpression)be.Right;
-
-                if (me.Member.DeclaringType == memberDeclaringType && me.Member.Name == memberName) {
-                    return GetValueFromExpression(be.Left);
-                }
+                var me = (MemberExpression) be.Left;
+                fieldName = me.Member.Name;
+                value = GetValueFromExpression(be.Right);
+                return true;
+            }
+            if (be.Right.NodeType == ExpressionType.MemberAccess) {
+                var me = (MemberExpression) be.Right;
+                fieldName = me.Member.Name;
+                value = GetValueFromExpression(be.Left);
+                return true;
             }
 
-            // We should have returned by now. 
-            throw new Exception("There is a bug in this program.");
+            fieldName = default;
+            value = default;
+            return false;
         }
 
         internal static object GetValueFromExpression(Expression expression) {

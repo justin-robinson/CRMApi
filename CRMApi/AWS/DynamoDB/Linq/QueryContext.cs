@@ -14,14 +14,13 @@ namespace CRMApi.AWS.DynamoDB.Linq {
 
             var whereFinder = new InnermostWhereFinder();
             var whereExpression = whereFinder.GetInnermostWhere(expression);
-            var lambdaExpression = (LambdaExpression)((UnaryExpression)(whereExpression.Arguments[1])).Operand;
+            var lambdaExpression = (LambdaExpression)((UnaryExpression)whereExpression.Arguments[1]).Operand;
 
             lambdaExpression = (LambdaExpression)Evaluator.PartialEval(lambdaExpression);
 
-            var postFinder = new PostFinder(lambdaExpression.Body);
-            var postIds = postFinder.PostIds;
+            var itemFinder = new ItemFinder(lambdaExpression.Body);
 
-            var posts = postIds.Any() ? ServiceHelper.GetPostsByPostId(postIds) : ServiceHelper.GetPosts();
+            var posts = ServiceHelper.GetPosts(itemFinder.ScanConditions);
 
             var queryablePosts = posts.AsQueryable();
 

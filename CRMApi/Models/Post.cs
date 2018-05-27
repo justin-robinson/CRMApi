@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.DataModel;
 
 namespace CRMApi.Models {
     [DynamoDBTable("Posts")]
-    public class Post {
+    public class Post : AbstractModel<Post> {
         [DynamoDBHashKey] public Guid PostId { get; set; }
         [DynamoDBProperty] public string Content { get; set; }
         [DynamoDBProperty] public DateTime CreateTime { get; set; }

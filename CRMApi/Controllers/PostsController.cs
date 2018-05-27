@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using CRMApi.AWS.DynamoDB;
-using CRMApi.AWS.DynamoDB.Linq;
 using CRMApi.Models;
 
 namespace CRMApi.Controllers {
@@ -14,9 +13,8 @@ namespace CRMApi.Controllers {
         // GET api/posts
         [HttpGet]
         public JsonResult Get() {
-            var posts = new QueryableServerData<Post>();
             var q =
-                from p in posts
+                from p in Models.Post.Queryable
                 where p.DeleteTime > DateTime.Now
                 select p;
             return Json(q.ToList());
@@ -25,9 +23,8 @@ namespace CRMApi.Controllers {
         // GET api/posts/5
         [HttpGet("{postId}")]
         public JsonResult Get(Guid postId) {
-            var posts = new QueryableServerData<Post>();
             var q =
-                (from p in posts
+                (from p in Models.Post.Queryable
                  where p.PostId == postId
                  select p).Take(1);
             var post = q.First();
@@ -58,9 +55,8 @@ namespace CRMApi.Controllers {
         [HttpDelete("{postId}")]
         public async void Delete(Guid postId) {
             var context = Client.GetContext();
-            var posts = new QueryableServerData<Post>();
             var q =
-                (from p in posts
+                (from p in Models.Post.Queryable
                  where p.PostId == postId
                  select p).Take(1);
             var post = q.First();

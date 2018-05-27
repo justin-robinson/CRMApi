@@ -30,7 +30,9 @@ namespace CRMApi.AWS.DynamoDB.Linq {
         public Type ElementType => typeof(T);
 
         public IEnumerator<T> GetEnumerator() {
-            return Provider.Execute<IEnumerable<T>>(Expression).GetEnumerator();
+            return Provider
+                .Execute<IEnumerable<T>>(Expression)
+                .GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() {

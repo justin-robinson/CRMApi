@@ -6,6 +6,7 @@ namespace CRMApi.Models {
     public class Post : AbstractModel<Post> {
         [DynamoDBHashKey] public Guid PostId { get; set; }
         [DynamoDBProperty] public string Content { get; set; }
+        [DynamoDBProperty] public string Title { get; set; }
         [DynamoDBProperty] public DateTime CreateTime { get; set; }
         [DynamoDBProperty] public DateTime UpdateTime { get; set; }
         [DynamoDBProperty] public DateTime DeleteTime { get; set; }

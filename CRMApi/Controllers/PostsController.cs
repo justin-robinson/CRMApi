@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-
-using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.DocumentModel;
 
 using CRMApi.AWS.DynamoDB;
 using CRMApi.Models;
@@ -15,49 +12,49 @@ namespace CRMApi.Controllers {
 
         // GET api/posts
         [HttpGet]
-        public async Task<JsonResult> Get() {
-            LinkedList<Post> posts = new LinkedList<Post>();
-            var query = Client.GetContext().ScanAsync<Post>(new List<ScanCondition> {
-                new ScanCondition("DeleteTime", ScanOperator.Equal, DateTime.MinValue)
-            });
-            while (!query.IsDone) {
-                (await query.GetNextSetAsync()).ForEach(p => posts.AddLast(p));
-            }
-            return Json(posts);
+        public JsonResult Get() {
+
+            return Json(Models.Post.All
+                .Where(p => p.DeleteTime > DateTime.UtcNow)
+                .ToList());
         }
 
         // GET api/posts/5
         [HttpGet("{postId}")]
-        public async Task<JsonResult> Get(string postId) {
-            Post post = await Client.GetContext().LoadAsync<Post>(postId);
-            return Json(post);
+        public JsonResult Get(Guid postId) {
+            return Json(Models.Post.All
+                .Where(p => p.PostId == postId)
+                .First());
         }
 
         // POST api/posts
         [HttpPost]
-        public async Task<string> Post(Post post) {
-            post.PostId = Guid.NewGuid().ToString();
-            post.CreateTime = DateTime.Now;
+        public async Task<Guid> Post(Post post) {
+            post.PostId = Guid.NewGuid();
+            post.CreateTime = DateTime.UtcNow;
             post.UpdateTime = post.CreateTime;
+            post.DeleteTime = DateTime.MaxValue;
             await Client.GetContext().SaveAsync(post);
             return post.PostId;
         }
 
         // PUT api/posts/5
         [HttpPut("{postId}")]
-        public async Task<string> Put(string postId, Post post) {
+        public async Task<Guid> Put(Guid postId, Post post) {
             post.PostId = postId;
-            post.UpdateTime = DateTime.Now;
+            post.UpdateTime = DateTime.UtcNow;
             await Client.GetContext().SaveAsync(post);
             return post.PostId;
         }
 
         // DELETE api/posts/5
         [HttpDelete("{postId}")]
-        public async void Delete(string postId) {
+        public async void Delete(Guid postId) {
             var context = Client.GetContext();
-            Post post = await context.LoadAsync<Post>(postId);
-            post.DeleteTime = DateTime.Now;
+            var post = Models.Post.All
+                .Where(p => p.PostId == postId)
+                .First();
+            post.DeleteTime = DateTime.UtcNow;
             await context.SaveAsync(post);
         }
     }

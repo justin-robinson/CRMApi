@@ -14,8 +14,7 @@ namespace CRMApi.Controllers {
         [HttpGet]
         public JsonResult Get() {
 
-            return Json(Models.Post
-                .Select()
+            return Json(Models.Post.All
                 .Where(p => p.DeleteTime > DateTime.UtcNow)
                 .ToList());
         }
@@ -23,8 +22,7 @@ namespace CRMApi.Controllers {
         // GET api/posts/5
         [HttpGet("{postId}")]
         public JsonResult Get(Guid postId) {
-            return Json(Models.Post
-                .Select()
+            return Json(Models.Post.All
                 .Where(p => p.PostId == postId)
                 .First());
         }
@@ -53,8 +51,7 @@ namespace CRMApi.Controllers {
         [HttpDelete("{postId}")]
         public async void Delete(Guid postId) {
             var context = Client.GetContext();
-            var post = Models.Post
-                .Select()
+            var post = Models.Post.All
                 .Where(p => p.PostId == postId)
                 .First();
             post.DeleteTime = DateTime.UtcNow;

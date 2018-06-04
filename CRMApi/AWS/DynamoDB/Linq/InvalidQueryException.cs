@@ -4,7 +4,7 @@ namespace CRMApi.AWS.DynamoDB.Linq {
         private string message;
 
         public InvalidQueryException(string message) {
-            this.message = message + " ";
+            this.message = message;
         }
 
         public override string Message => "The client query is invalid: " + message;

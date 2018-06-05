@@ -30,7 +30,7 @@ namespace CRMApi.AWS.DynamoDB {
                     ServiceURL = serviceUrl
                 });
             } catch (Exception e) {
-                LambdaLogger.Log($"Error: failed to create a DynamoDB clien: {e.Message}");
+                LambdaLogger.Log($"Error: failed to create a DynamoDB client: {e.Message}");
             }
 		}
 

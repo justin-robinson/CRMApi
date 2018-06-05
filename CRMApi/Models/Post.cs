@@ -5,6 +5,7 @@ namespace CRMApi.Models {
     [DynamoDBTable("Posts")]
     public class Post : AbstractModel<Post> {
         [DynamoDBHashKey] public Guid PostId { get; set; }
+        [DynamoDBProperty] public Guid AuthorId { get; set; }
         [DynamoDBProperty] public string Content { get; set; }
         [DynamoDBProperty] public string Title { get; set; }
         [DynamoDBProperty] public DateTime CreateTime { get; set; }
@@ -13,9 +14,11 @@ namespace CRMApi.Models {
 
         public Post() { }
 
-        public Post(Guid postId, string content, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
+        public Post(Guid postId, Guid authorId, string content, string title, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
             PostId = postId;
+            AuthorId = authorId;
             Content = content;
+            Title = title;
             CreateTime = createTime;
             UpdateTime = updateTime;
             DeleteTime = deleteTime;

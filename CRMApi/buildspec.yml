@@ -9,4 +9,5 @@ phases:
 artifacts:
   files:
     - bin/Debug/netcoreapp2.0/*
+    - serverless.template
     - serverless.yaml

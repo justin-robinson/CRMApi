@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Conditions:
+  BucketNameGenerated:
+    Fn::Equals:
+    - Ref: BucketName
+    - ''
+  CreateS3Bucket:
+    Fn::Equals:
+    - Ref: ShouldCreateBucket
+    - 'true'
+Description: An AWS Serverless Application that uses the ASP.NET Core framework running
+  in Amazon Lambda.
+Outputs:
+  ApiURL:
+    Description: API endpoint URL for Prod environment
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+  S3ProxyBucket:
+    Value:
+      Fn::If:
+      - CreateS3Bucket
+      - Ref: Bucket
+      - Ref: BucketName
+Parameters:
+  BucketName:
+    Description: Name of S3 bucket that will be proxied. If left blank a name will
+      be generated.
+    MinLength: '0'
+    Type: String
+  ShouldCreateBucket:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Description: If true then the S3 bucket that will be proxied will be created with
+      the CloudFormation stack.
+    Type: String
+Resources:
+  AspNetCoreFunction:
+    Properties:
+      CodeUri: s3://crm-api-dev-bucket-18a5r8bbg1exp/a38409370f12b6f6b9ee003445ca9a3c
+      Environment:
+        Variables:
+          AppS3Bucket:
+            Fn::If:
+            - CreateS3Bucket
+            - Ref: Bucket
+            - Ref: BucketName
+      Events:
+        PutResource:
+          Properties:
+            Method: ANY
+            Path: /{proxy+}
+          Type: Api
+      Handler: CRMApi::CRMApi.LambdaEntryPoint::FunctionHandlerAsync
+      MemorySize: 256
+      Policies:
+      - AWSLambdaFullAccess
+      Role: null
+      Runtime: dotnetcore2.0
+      Timeout: 30
+    Type: AWS::Serverless::Function
+  Bucket:
+    Condition: CreateS3Bucket
+    Properties:
+      BucketName:
+        Fn::If:
+        - BucketNameGenerated
+        - Ref: AWS::NoValue
+        - Ref: BucketName
+    Type: AWS::S3::Bucket
+Transform: AWS::Serverless-2016-10-31

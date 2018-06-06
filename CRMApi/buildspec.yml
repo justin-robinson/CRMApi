@@ -5,6 +5,8 @@ phases:
     commands:
       - dotnet restore
       - dotnet build
+      - aws cloudformation package --template-file serverless.template --s3-bucket crm-api-dev-bucket-18a5r8bbg1exp --output-template-file serverless.yaml
 artifacts:
   files:
     - bin/Debug/netcoreapp2.0/*
+    - serverless.yaml

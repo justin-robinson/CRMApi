@@ -28,6 +28,8 @@ namespace CRMApi
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseCors(builder => builder.WithOrigins("*"));
+            } else {
+                app.UseCors(builder => builder.WithOrigins("https://lucunas.io"));
             }
 
 

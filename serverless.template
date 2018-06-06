@@ -28,7 +28,7 @@
       "Properties": {
         "Handler": "CRMApi::CRMApi.LambdaEntryPoint::FunctionHandlerAsync",
         "Runtime": "dotnetcore2.0",
-        "CodeUri": "",
+        "CodeUri": "./CRMApi",
         "MemorySize": 256,
         "Timeout": 30,
         "Role": null,

@@ -5,7 +5,8 @@ phases:
     commands:
       - dotnet restore
       - dotnet publish -c Release
+      - zip -j package.zip CRMApi/bin/Release/netcoreapp2.0/publish/*
 artifacts:
   files:
-    - CRMApi/bin/Release/netcoreapp2.0/publish/*
+    - package.zip
     - serverless.yaml

@@ -7,7 +7,7 @@ using CRMApi.AWS.DynamoDB;
 using CRMApi.Models;
 
 namespace CRMApi.Controllers {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/")]
     public class AuthorsController : Controller {
 
         [HttpGet]
@@ -22,6 +22,13 @@ namespace CRMApi.Controllers {
             return Json(Author.All
                 .Where(a => a.AuthorId == authorId)
                 .First());
+        }
+
+        [HttpGet("{authorId}/posts")]
+        public JsonResult GetPosts(Guid authorId) {
+            return Json(Models.Post.All
+                .Where(a => a.AuthorId == authorId)
+                .ToList());
         }
 
         [HttpPost]

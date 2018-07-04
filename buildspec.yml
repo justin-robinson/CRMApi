@@ -4,5 +4,8 @@ phases:
   build:
     commands:
       - dotnet restore
-      - dotnet publish -c Release
-      - (cd CRMApi && dotnet lambda deploy-serverless --config-file ../aws-lambda-tools-defaults.json)
+      - dotnet publish -c Release -o .publish
+      - zip -j package.zip CRMApi/.publish/*
+      - ws lambda update-function-code
+            --function-name crm-api-dev-AspNetCoreFunction-ARMYHI7D4SNU
+            --zip-file fileb://package.zip

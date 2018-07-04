@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using CRMApi.AWS.DynamoDB;
 using CRMApi.Models;
+using CRMApi.Utils;
 
 namespace CRMApi.Controllers {
     [Route("api/[controller]/")]
@@ -33,7 +34,12 @@ namespace CRMApi.Controllers {
 
         [HttpPost]
         public async Task<Guid> Post(Author author) {
-            author.AuthorId = Guid.NewGuid();
+            do {
+                author.AuthorId = Guid.NewGuid();
+            } while (Get(author.AuthorId).Value != null);
+            author.Salt = Crypto.GenerateRandomCryptographicKey(128);
+            var password = new Password(author.Password, author.Salt);
+            author.Password = password.Hash();
             author.CreateTime = DateTime.UtcNow;
             author.UpdateTime = author.CreateTime;
             author.DeleteTime = DateTime.MaxValue;

@@ -7,6 +7,8 @@ namespace CRMApi.Models {
         [DynamoDBHashKey] public Guid AuthorId { get; set; }
         [DynamoDBProperty] public string Username { get; set; }
         [DynamoDBProperty] public string EmailAddress { get; set; }
+        [DynamoDBProperty] public string Password { get; set; }
+        [DynamoDBProperty] public string Salt { get; set; }
         [DynamoDBProperty] public string FirstName { get; set; }
         [DynamoDBProperty] public string LastName { get; set; }
         [DynamoDBProperty] public Uri AvatarUri { get; set; }

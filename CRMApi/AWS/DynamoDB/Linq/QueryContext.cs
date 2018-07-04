@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Amazon.Lambda.Core;
 
 namespace CRMApi.AWS.DynamoDB.Linq {
     public class QueryContext  {
@@ -24,11 +25,16 @@ namespace CRMApi.AWS.DynamoDB.Linq {
             var treeCopier = new ExpressionTreeModifier<TU>(queryableItems);
             var newExpressionTree = treeCopier.Visit(expression);
 
-            var output = isEnumerable
-                ? queryableItems.Provider.CreateQuery(newExpressionTree)
-                : queryableItems.Provider.Execute(newExpressionTree);
+            T output = default;
+            try {
+                output = (T) (isEnumerable
+                    ? queryableItems.Provider.CreateQuery(newExpressionTree)
+                    : queryableItems.Provider.Execute(newExpressionTree));
+            } catch (InvalidOperationException e) {
+                LambdaLogger.Log(e.Message);
+            }
 
-            return (T) output;
+            return output;
         }
 
         private static bool IsQueryOverDataSource(Expression expression) {

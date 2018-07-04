@@ -1,12 +1,8 @@
-version: 0.2
+version: 0.3
 
 phases:
   build:
     commands:
       - dotnet restore
       - dotnet publish -c Release
-      - zip -j package.zip CRMApi/bin/Release/netcoreapp2.0/publish/*
-artifacts:
-  files:
-    - package.zip
-    - serverless.yaml
+      - (cd CRMApi && dotnet lambda deploy-serverless --config-file ../aws-lambda-tools-defaults.json)

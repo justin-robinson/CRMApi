@@ -8,7 +8,7 @@ using Amazon.Runtime.CredentialManagement;
 namespace CRMApi.AWS.DynamoDB {
 
     public static class Client {
-        private static AmazonDynamoDBClient Instance { get; set; }
+        public static AmazonDynamoDBClient Instance { get; set; }
 
         public static void CreateClient() {
             Instance = new AmazonDynamoDBClient();

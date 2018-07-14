@@ -47,6 +47,9 @@ namespace CRMApi
                 Client.CreateClient();
             }
 
+            Client.Instance.CreateTableAsync(TableDefinitions.Post.TableRequest());
+            Client.Instance.CreateTableAsync(TableDefinitions.Author.TableRequest());
+
             app.UseMvc();
         }
     }

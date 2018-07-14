@@ -11,11 +11,10 @@ namespace CRMApi.Models {
         [DynamoDBProperty] public Uri HeroImageUri{ get; set; }
         [DynamoDBProperty] public DateTime CreateTime { get; set; }
         [DynamoDBProperty] public DateTime UpdateTime { get; set; }
-        [DynamoDBProperty] public DateTime DeleteTime { get; set; }
 
         public Post() { }
 
-        public Post(Guid postId, Guid authorId, string content, string title, Uri heroImageUri, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
+        public Post(Guid postId, Guid authorId, string content, string title, Uri heroImageUri, DateTime createTime, DateTime updateTime) {
             PostId = postId;
             AuthorId = authorId;
             Content = content;
@@ -23,7 +22,6 @@ namespace CRMApi.Models {
             HeroImageUri = heroImageUri;
             CreateTime = createTime;
             UpdateTime = updateTime;
-            DeleteTime = deleteTime;
         }
     }
 }

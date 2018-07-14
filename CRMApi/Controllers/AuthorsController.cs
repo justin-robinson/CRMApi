@@ -13,9 +13,7 @@ namespace CRMApi.Controllers {
 
         [HttpGet]
         public JsonResult Get() {
-            return Json(Author.All
-                .Where(p => p.DeleteTime > DateTime.UtcNow)
-                .ToList());
+            return Json(Author.All.ToList());
         }
 
         [HttpGet("{authorId}")]
@@ -42,7 +40,6 @@ namespace CRMApi.Controllers {
             author.Password = password.Hash();
             author.CreateTime = DateTime.UtcNow;
             author.UpdateTime = author.CreateTime;
-            author.DeleteTime = DateTime.MaxValue;
             await Client.GetContext().SaveAsync(author);
             return author.AuthorId;
         }
@@ -61,7 +58,6 @@ namespace CRMApi.Controllers {
             var author = Author.All
                 .Where(a => a.AuthorId == authorId)
                 .First();
-            author.DeleteTime = DateTime.UtcNow;
             await context.SaveAsync(author);
         }
     }

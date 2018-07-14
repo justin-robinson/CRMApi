@@ -10,20 +10,12 @@ namespace CRMApi.TableDefinitions {
                     new AttributeDefinition {
                         AttributeName = "PostId",
                         AttributeType = "S"
-                    },
-                    new AttributeDefinition {
-                        AttributeName = "DeleteTime",
-                        AttributeType = "S"
                     }
                 },
                 KeySchema = new List<KeySchemaElement> {
                     new KeySchemaElement {
                         AttributeName = "PostId",
                         KeyType = "HASH"
-                    },
-                    new KeySchemaElement {
-                        AttributeName = "DeleteTime",
-                        KeyType = "RANGE"
                     }
                 },
                 ProvisionedThroughput = new ProvisionedThroughput {

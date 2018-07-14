@@ -14,11 +14,10 @@ namespace CRMApi.Models {
         [DynamoDBProperty] public Uri AvatarUri { get; set; }
         [DynamoDBProperty] public DateTime CreateTime { get; set; }
         [DynamoDBProperty] public DateTime UpdateTime { get; set; }
-        [DynamoDBProperty] public DateTime DeleteTime { get; set; }
 
         public Author() { }
 
-        public Author(Guid authorId, string username, string emailAddress, string firstName, string lastName, Uri avatarUri, DateTime createTime, DateTime updateTime, DateTime deleteTime) {
+        public Author(Guid authorId, string username, string emailAddress, string firstName, string lastName, Uri avatarUri, DateTime createTime, DateTime updateTime) {
             AuthorId = authorId;
             Username = username;
             EmailAddress = emailAddress;
@@ -27,7 +26,6 @@ namespace CRMApi.Models {
             AvatarUri = avatarUri;
             CreateTime = createTime;
             UpdateTime = updateTime;
-            DeleteTime = deleteTime;
         }
     }
 }

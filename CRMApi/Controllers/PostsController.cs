@@ -14,9 +14,7 @@ namespace CRMApi.Controllers {
         [HttpGet]
         public JsonResult Get() {
 
-            return Json(Models.Post.All
-                .Where(p => p.DeleteTime > DateTime.UtcNow)
-                .ToList());
+            return Json(Models.Post.All.ToList());
         }
 
         // GET api/posts/5
@@ -33,7 +31,6 @@ namespace CRMApi.Controllers {
             post.PostId = Guid.NewGuid();
             post.CreateTime = DateTime.UtcNow;
             post.UpdateTime = post.CreateTime;
-            post.DeleteTime = DateTime.MaxValue;
             await Client.GetContext().SaveAsync(post);
             return post.PostId;
         }
@@ -54,7 +51,6 @@ namespace CRMApi.Controllers {
             var post = Models.Post.All
                 .Where(p => p.PostId == postId)
                 .First();
-            post.DeleteTime = DateTime.UtcNow;
             await context.SaveAsync(post);
         }
     }

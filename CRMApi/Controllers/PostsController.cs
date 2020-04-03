@@ -21,27 +21,27 @@ namespace CRMApi.Controllers {
         [HttpGet("{postId}")]
         public JsonResult Get(Guid postId) {
             return Json(Models.Post.All
-                .Where(p => p.PostId == postId)
+                .Where(p => p.postId == postId)
                 .First());
         }
 
         // POST api/posts
         [HttpPost]
         public async Task<Guid> Post(Post post) {
-            post.PostId = Guid.NewGuid();
-            post.CreateTime = DateTime.UtcNow;
-            post.UpdateTime = post.CreateTime;
+            post.postId = Guid.NewGuid();
+            post.createTime = DateTime.UtcNow;
+            post.updateTime = post.createTime;
             await Client.GetContext().SaveAsync(post);
-            return post.PostId;
+            return post.postId;
         }
 
         // PUT api/posts/5
         [HttpPut("{postId}")]
         public async Task<Guid> Put(Guid postId, Post post) {
-            post.PostId = postId;
-            post.UpdateTime = DateTime.UtcNow;
+            post.postId = postId;
+            post.updateTime = DateTime.UtcNow;
             await Client.GetContext().SaveAsync(post);
-            return post.PostId;
+            return post.postId;
         }
 
         // DELETE api/posts/5
@@ -49,7 +49,7 @@ namespace CRMApi.Controllers {
         public async void Delete(Guid postId) {
             var context = Client.GetContext();
             var post = Models.Post.All
-                .Where(p => p.PostId == postId)
+                .Where(p => p.postId == postId)
                 .First();
             await context.SaveAsync(post);
         }

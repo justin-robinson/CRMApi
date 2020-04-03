@@ -5,16 +5,16 @@ namespace CRMApi.TableDefinitions {
     public class Author {
         public static CreateTableRequest TableRequest() {
             return new CreateTableRequest {
-                TableName = "Authors",
+                TableName = "CRM-API-author",
                 AttributeDefinitions = new List<AttributeDefinition>{
                     new AttributeDefinition {
-                        AttributeName = "AuthorId",
+                        AttributeName = "authorId",
                         AttributeType = "S"
                     }
                 },
                 KeySchema = new List<KeySchemaElement> {
                     new KeySchemaElement {
-                        AttributeName = "AuthorId",
+                        AttributeName = "authorId",
                         KeyType = "HASH"
                     }
                 },

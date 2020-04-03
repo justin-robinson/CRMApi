@@ -19,44 +19,44 @@ namespace CRMApi.Controllers {
         [HttpGet("{authorId}")]
         public JsonResult Get(Guid authorId) {
             return Json(Author.All
-                .Where(a => a.AuthorId == authorId)
+                .Where(a => a.authorId == authorId)
                 .First());
         }
 
         [HttpGet("{authorId}/posts")]
         public JsonResult GetPosts(Guid authorId) {
             return Json(Models.Post.All
-                .Where(a => a.AuthorId == authorId)
+                .Where(a => a.authorId == authorId)
                 .ToList());
         }
 
         [HttpPost]
         public async Task<Guid> Post(Author author) {
             do {
-                author.AuthorId = Guid.NewGuid();
-            } while (Get(author.AuthorId).Value != null);
-            author.Salt = Crypto.GenerateRandomCryptographicKey(128);
-            var password = new Password(author.Password, author.Salt);
-            author.Password = password.Hash();
-            author.CreateTime = DateTime.UtcNow;
-            author.UpdateTime = author.CreateTime;
+                author.authorId = Guid.NewGuid();
+            } while (Get(author.authorId).Value != null);
+            author.salt = Crypto.GenerateRandomCryptographicKey(128);
+            var password = new Password(author.password, author.salt);
+            author.password = password.Hash();
+            author.createTime = DateTime.UtcNow;
+            author.updateTime = author.createTime;
             await Client.GetContext().SaveAsync(author);
-            return author.AuthorId;
+            return author.authorId;
         }
 
         [HttpPut("{authorId}")]
         public async Task<Guid> Put(Guid authorId, Author author) {
-            author.AuthorId = authorId;
-            author.UpdateTime = DateTime.UtcNow;
+            author.authorId = authorId;
+            author.updateTime = DateTime.UtcNow;
             await Client.GetContext().SaveAsync(author);
-            return author.AuthorId;
+            return author.authorId;
         }
 
         [HttpDelete("{authorId}")]
         public async void Delete(Guid authorId) {
             var context = Client.GetContext();
             var author = Author.All
-                .Where(a => a.AuthorId == authorId)
+                .Where(a => a.authorId == authorId)
                 .First();
             await context.SaveAsync(author);
         }

@@ -2,26 +2,26 @@
 using Amazon.DynamoDBv2.DataModel;
 
 namespace CRMApi.Models {
-    [DynamoDBTable("Posts")]
+    [DynamoDBTable("CRM-API-post")]
     public class Post : AbstractModel<Post> {
-        [DynamoDBHashKey] public Guid PostId { get; set; }
-        [DynamoDBProperty] public Guid AuthorId { get; set; }
-        [DynamoDBProperty] public string Content { get; set; }
-        [DynamoDBProperty] public string Title { get; set; }
-        [DynamoDBProperty] public Uri HeroImageUri{ get; set; }
-        [DynamoDBProperty] public DateTime CreateTime { get; set; }
-        [DynamoDBProperty] public DateTime UpdateTime { get; set; }
+        [DynamoDBHashKey] public Guid postId { get; set; }
+        [DynamoDBProperty] public Guid authorId { get; set; }
+        [DynamoDBProperty] public string content { get; set; }
+        [DynamoDBProperty] public string title { get; set; }
+        [DynamoDBProperty] public Uri heroImageUri{ get; set; }
+        [DynamoDBProperty] public DateTime createTime { get; set; }
+        [DynamoDBProperty] public DateTime updateTime { get; set; }
 
         public Post() { }
 
         public Post(Guid postId, Guid authorId, string content, string title, Uri heroImageUri, DateTime createTime, DateTime updateTime) {
-            PostId = postId;
-            AuthorId = authorId;
-            Content = content;
-            Title = title;
-            HeroImageUri = heroImageUri;
-            CreateTime = createTime;
-            UpdateTime = updateTime;
+            this.postId = postId;
+            this.authorId = authorId;
+            this.content = content;
+            this.title = title;
+            this.heroImageUri = heroImageUri;
+            this.createTime = createTime;
+            this.updateTime = updateTime;
         }
     }
 }
